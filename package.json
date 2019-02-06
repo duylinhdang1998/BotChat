@@ -1,0 +1,23 @@
+{
+  "name": "botfb",
+  "version": "1.0.0",
+  "description": "no thing",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/duylinhdang1998/BotChat.git"
+  },
+  "author": "duylinhmeliodas",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/duylinhdang1998/BotChat/issues"
+  },
+  "homepage": "https://github.com/duylinhdang1998/BotChat#readme",
+  "dependencies": {
+    "express": "^4.13.4",
+    "body-parser": "^1.15.0"
+  }
+}
