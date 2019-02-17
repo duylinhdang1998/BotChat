@@ -30,7 +30,7 @@ app.post("/webhook", (req, res) => {
     });
 
     // Returns a '200 OK' response to all requests
-    res.status(200).send(webhook_event);
+    res.status(200).send(sender_psid);
   } else {
     // Returns a '404 Not Found' if event is not from a page subscription
     res.sendStatus(404);
