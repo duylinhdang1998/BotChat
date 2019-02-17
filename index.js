@@ -1,6 +1,6 @@
 require("dotenv").config();
 const express = require("express");
-
+const request = require("request");
 const bodyParser = require("body-parser");
 const app = express();
 app.use(bodyParser.json());
@@ -20,13 +20,19 @@ app.post("/webhook", (req, res) => {
   // Checks this is an event from a page subscription
   if (body.object === "page") {
     // Iterates over each entry - there may be multiple if batched
-    body.entry.forEach(function(entry) {
+    body.entry.forEach(function (entry) {
       // Gets the message. entry.messaging is an array, but
       // will only ever contain one message, so we get index 0
       webhook_event = entry.messaging[0];
 
       let sender_psid = webhook_event.sender.id;
       console.log("Sender PSID: " + sender_psid);
+      if (webhook_event.message) {
+        handleMessage(sender_psid, webhook_event.message);
+      } else if (webhook_event.postback) {
+        // handlePostback(sender_psid, webhook_event.postback);
+        console.log("Error");
+      }
     });
 
     // Returns a '200 OK' response to all requests
@@ -58,6 +64,41 @@ app.get("/webhook", (req, res) => {
     }
   }
 });
+
+const handleMessage = (sender_psid, received_message) => {
+  let response;
+  if (received_message.text) {
+    response = {
+      "text": `You sent the message: "${
+        received_message.text
+        }". Now send me an image`
+    };
+  }
+  callSendAPI(sender_psid, response);
+};
+const callSendAPI = (sender_psid, response) => {
+  let request_body = {
+    "recipient": {
+      "id": sender_psid
+    },
+    "message": response
+  };
+  request(
+    {
+      "uri": "https://graph.facebook.com/v2.6/me/messages",
+      "qs": { "access_token": PAGE_ACCESS_TOKEN },
+      "method": "POST",
+      "json": request_body
+    },
+    (err, res, body) => {
+      if (!err) {
+        console.log("message sent!");
+      } else {
+        console.error("Unable to send message:" + err);
+      }
+    }
+  );
+};
 
 app.listen(PORT, () => {
   console.log("Sever listening  " + PORT);
