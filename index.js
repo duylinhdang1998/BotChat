@@ -11,6 +11,9 @@ const PAGE_ACCESS_TOKEN = process.env.MESSENGER_PAGE_ACCESS_TOKEN;
 const SEVER_URL = process.env.SEVER_URL;
 const VALIDATION_TOKEN = process.env.MESSENGER_VALIDATION_TOKEN;
 
+app.get("/", (req, res) => {
+  res.send("Sever is starting !");
+});
 app.post("/webhook", (req, res) => {
   let body = req.body;
   let webhook_event = "";
@@ -20,7 +23,7 @@ app.post("/webhook", (req, res) => {
     body.entry.forEach(function(entry) {
       // Gets the message. entry.messaging is an array, but
       // will only ever contain one message, so we get index 0
-      webhook_event = entry.messaging;
+      webhook_event = entry.messaging[0];
 
       let sender_psid = webhook_event.sender.id;
       console.log("Sender PSID: " + sender_psid);
