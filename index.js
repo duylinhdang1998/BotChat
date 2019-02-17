@@ -36,7 +36,7 @@ app.post("/webhook", (req, res) => {
     });
 
     // Returns a '200 OK' response to all requests
-    res.status(200).send(sender_psid);
+    res.status(200).send('EVENT_RECEIVED');
   } else {
     // Returns a '404 Not Found' if event is not from a page subscription
     res.sendStatus(404);
@@ -67,6 +67,7 @@ app.get("/webhook", (req, res) => {
 
 const handleMessage = (sender_psid, received_message) => {
   let response;
+  console.log(received_message);
   if (received_message.text) {
     response = {
       "text": `You sent the message: "${
@@ -74,6 +75,7 @@ const handleMessage = (sender_psid, received_message) => {
         }". Now send me an image`
     };
   }
+  //thay doi text để gửi nội dung đi. Chổ này đang gán cứng
   callSendAPI(sender_psid, response);
 };
 const callSendAPI = (sender_psid, response) => {
@@ -92,8 +94,6 @@ const callSendAPI = (sender_psid, response) => {
     },
     (err, res, body) => {
       if (!err) {
-        console.log(res);
-        console.log(body);
         console.log("message sent!");
       } else {
         console.error("Unable to send message:" + err);
