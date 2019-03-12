@@ -5,6 +5,7 @@ const RestClient = require('node-rest-client').Client;
 const _ = require('lodash');
 const validateMessage = require('./regexMessage').vaidateMessage;
 module.exports.handleMessage = (sender_psid, received_message) => {
+    console.log(sender_psid)
     let response;
     if (received_message.text) {
         messageWitAI(received_message.text, sender_psid)
@@ -127,6 +128,7 @@ const callSendAPI = (sender_psid, response, cb = null) => {
                 if (cb) {
                     cb();
                 }
+
                 console.log("message sent!");
             } else {
                 console.error("Unable to send message:" + err);
@@ -137,9 +139,9 @@ const callSendAPI = (sender_psid, response, cb = null) => {
 const messageWitAI = (fbUserMessage, senderID) => {
     let senderName = "";
     getSenderInformation(senderID, (senderInfo) => {
+        console.log(senderInfo)
         senderName = senderInfo.first_name
     });
-    console.log(senderName)
     getWitAPIData(fbUserMessage, (witData) => {
         if (witData.entities.greeting) {
             let response = { "text": `Chào bạn ${senderName}, tôi có thể giúp gì cho bạn` };
@@ -179,7 +181,7 @@ const messageWitAI = (fbUserMessage, senderID) => {
 }
 const getSenderInformation = (senderID, cb) => {
     return request({
-        url: "https://graph.facebook.com/v2.6/" + senderID,
+        url: "https://graph.facebook.com/v3.2/" + senderID,
         qs: {
             access_token: config.PAGE_ACCESS_TOKEN,
             fields: "first_name"
@@ -197,7 +199,7 @@ const getWitAPIData = (fbUserMessage, cb) => {
         data: { userMessage: fbUserMessage },
         headers: { "Content-Type": "application/json" }
     };
-    return client.post("https://bot-demo123.herokuapp.com/v1/getEntities", arguments, (data, response) => {
+    return client.post("https://21639e2f.ngrok.io/v1/getEntities", arguments, (data, response) => {
         if (data.status === 'ok') {
             return cb(data.data);
         }
