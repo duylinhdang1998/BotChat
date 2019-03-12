@@ -139,6 +139,7 @@ const messageWitAI = (fbUserMessage, senderID) => {
     getSenderInformation(senderID, (senderInfo) => {
         senderName = senderInfo.first_name
     });
+    console.log(senderName)
     getWitAPIData(fbUserMessage, (witData) => {
         if (witData.entities.greeting) {
             let response = { "text": `Chào bạn ${senderName}, tôi có thể giúp gì cho bạn` };
