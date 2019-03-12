@@ -199,7 +199,7 @@ const getWitAPIData = (fbUserMessage, cb) => {
         data: { userMessage: fbUserMessage },
         headers: { "Content-Type": "application/json" }
     };
-    return client.post("https://21639e2f.ngrok.io/v1/getEntities", arguments, (data, response) => {
+    return client.post("https://bot-demo123.herokuapp.com/v1/getEntities", arguments, (data, response) => {
         if (data.status === 'ok') {
             return cb(data.data);
         }
