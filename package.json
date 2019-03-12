@@ -20,6 +20,9 @@
     "body-parser": "^1.15.0",
     "dotenv": "^6.2.0",
     "express": "^4.13.4",
+    "lodash": "^4.17.11",
+    "node-rest-client": "^3.1.0",
+    "node-wit": "^5.0.0",
     "request": "^2.88.0"
   }
 }

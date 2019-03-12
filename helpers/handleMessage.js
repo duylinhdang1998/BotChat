@@ -1,14 +1,13 @@
 const config = require('./config');
 const timeout = 3000;
 const request = require("request");
+const RestClient = require('node-rest-client').Client;
+const _ = require('lodash');
+const validateMessage = require('./regexMessage').vaidateMessage;
 module.exports.handleMessage = (sender_psid, received_message) => {
     let response;
     if (received_message.text) {
-        response = {
-            "text": `You sent the message: "${
-                received_message.text
-                }". Now send me an image`
-        };
+        messageWitAI(received_message.text, sender_psid)
     } else if (received_message.attachments) {
         let attachment_url = received_message.attachments[0].payload.url;
         response = {
@@ -36,17 +35,15 @@ module.exports.handleMessage = (sender_psid, received_message) => {
                 }
             }
         }
+        callSendAPI(sender_psid, response);
     }
-    //thay doi text để gửi nội dung đi. Chổ này đang gán cứng
-    callSendAPI(sender_psid, response);
 };
 module.exports.handlePostback = (sender_psid, received_postback) => {
     let response;
     let payload = received_postback.payload;
     switch (payload) {
         case 'GET_STARTED': {
-            response = askTemplate("Do you want to visit wiloke themes!!  ");
-            callSendAPI(sender_psid, response);
+            messageWitAI("Bắt đầu", sender_psid);
             break;
         }
         case 'yes': {
@@ -137,3 +134,72 @@ const callSendAPI = (sender_psid, response, cb = null) => {
         }
     );
 };
+const messageWitAI = (fbUserMessage, senderID) => {
+    let senderName = "";
+    getSenderInformation(senderID, (senderInfo) => {
+        senderName = senderInfo.first_name
+    });
+    getWitAPIData(fbUserMessage, (witData) => {
+        if (witData.entities.greeting) {
+            let response = { "text": `Chào bạn ${senderName}, tôi có thể giúp gì cho bạn` };
+            callSendAPI(senderID, response);
+            return;
+        }
+        if (witData.entities.song && witData.entities.hit && witData.entities.website) {
+            switch (validateMessage(witData.entities.website[0].value)) {
+                case "Zing.vn": {
+                    let response = { "text": "Bài hát hay nhất trên Zing Mp3 là Đúng người đúng thời điểm" };
+                    callSendAPI(senderID, response, () => {
+                        let res = { "text": "https://www.youtube.com/watch?v=2MZ_oQOGC24" };
+                        callSendAPI(senderID, res);
+                    })
+                    break;
+                }
+                case "nhaccuatui": {
+                    let res = { "text": "https://www.youtube.com/watch?v=ZQAv-3iGhSU - Đời là thế thôi" }
+                    callSendAPI(senderID, res);
+                    break;
+                }
+                default: {
+                    let res = { "text": " Tôi không biết " }
+                    callSendAPI(senderID, res);
+                    break;
+                }
+            }
+
+        }
+        if (_.isEmpty(witData.entities)) {
+            let response = { "text": "Xin lỗi tôi không hiểu bạn đang nói cái gì" }
+            callSendAPI(senderID, response);
+        }
+    })
+
+
+}
+const getSenderInformation = (senderID, cb) => {
+    return request({
+        url: "https://graph.facebook.com/v2.6/" + senderID,
+        qs: {
+            access_token: config.PAGE_ACCESS_TOKEN,
+            fields: "first_name"
+        },
+        method: "GET"
+    }, (err, response, body) => {
+        if (!err) {
+            return cb(JSON.parse(body))
+        }
+    })
+}
+const getWitAPIData = (fbUserMessage, cb) => {
+    const client = new RestClient();
+    let arguments = {
+        data: { userMessage: fbUserMessage },
+        headers: { "Content-Type": "application/json" }
+    };
+    return client.post("https://ccc5d91e.ngrok.io/v1/getEntities", arguments, (data, response) => {
+        if (data.status === 'ok') {
+            return cb(data.data);
+        }
+        return cb(null);
+    })
+}
