@@ -187,7 +187,7 @@ const messageWitAI = async (fbUserMessage, senderID) => {
         }
         if (witData.entities.lover && witData.entities.question) {
             if (witData.entities.me) {
-                let res = validateMessage(senderName.toLowerCaseP()) === "ly" ? { "text": `${senderName} làm gì có ny. còn đang sợ ế đấy :))))` } : { "text": "Chịu t không biết" };
+                let res = validateMessage(senderName.toLowerCase()) === "ly" ? { "text": `${senderName} làm gì có ny. còn đang sợ ế đấy :))))` } : { "text": "Chịu t không biết" };
             }
             else {
                 let res = { "text": "T có rồi. ny t xinh lắm :)))))" }
