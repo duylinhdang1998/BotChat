@@ -136,13 +136,12 @@ const callSendAPI = (sender_psid, response, cb = null) => {
         }
     );
 };
-const messageWitAI = (fbUserMessage, senderID) => {
+const messageWitAI = async (fbUserMessage, senderID) => {
     let senderName = "";
-    getSenderInformation(senderID, (senderInfo) => {
-        console.log(senderInfo)
+    await getSenderInformation(senderID, (senderInfo) => {
         senderName = senderInfo.first_name
     });
-    getWitAPIData(fbUserMessage, (witData) => {
+    await getWitAPIData(fbUserMessage, (witData) => {
         if (witData.entities.greeting) {
             let response = { "text": `Chào bạn ${senderName}, tôi có thể giúp gì cho bạn` };
             callSendAPI(senderID, response);
@@ -163,13 +162,58 @@ const messageWitAI = (fbUserMessage, senderID) => {
                     callSendAPI(senderID, res);
                     break;
                 }
+                case "youtube": {
+                    let res = { "text": "https://www.youtube.com/watch?v=ZQAv-3iGhSU - Đời là thế thôi" }
+                    callSendAPI(senderID, res);
+                    break;
+                }
                 default: {
                     let res = { "text": " Tôi không biết " }
                     callSendAPI(senderID, res);
                     break;
                 }
             }
-
+        }
+        if (witData.entities.health) {
+            if (witData.entities.me) {
+                let res = { "text": "M khỏe hay không thì tao không biết" }
+                callSendAPI(senderID, res);
+            }
+            else {
+                let res = { "text": "Tôi khỏe. Cảm ơn " + senderName }
+                callSendAPI(senderID, res);
+            }
+            return;
+        }
+        if (witData.entities.lover && witData.entities.question) {
+            if (witData.entities.me) {
+                let res = validateMessage(senderName.toLowerCaseP()) === "ly" ? { "text": `${senderName} làm gì có ny. còn đang sợ ế đấy :))))` } : { "text": "Chịu t không biết" };
+            }
+            else {
+                let res = { "text": "T có rồi. ny t xinh lắm :)))))" }
+            }
+            callSendAPI(senderID, res);
+            return;
+        }
+        if (witData.entities.badword) {
+            let res = { "text": "Bạn đang nói bậy. Đề nghị bạn lịch sự" }
+            callSendAPI(senderID, res);
+            return;
+        }
+        if (witData.entities.handsome) {
+            if (witData.entities.question) {
+                let res = { "text": "Tôi chưa gặp bạn nên không biết" }
+            }
+            else {
+                let res = { "text": "Ok kệ bạn" }
+            }
+            callSendAPI(senderID, res);
+            return;
+        }
+        if (witData.entities.goodbye) {
+            let res = { "text": "Ok tạm biệt bạn" }
+            callSendAPI(senderID, res);
+            return;
         }
         if (_.isEmpty(witData.entities)) {
             let response = { "text": "Xin lỗi tôi không hiểu bạn đang nói cái gì" }
