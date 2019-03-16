@@ -187,11 +187,12 @@ const messageWitAI = async (fbUserMessage, senderID) => {
             return;
         }
         if (witData.entities.lover && witData.entities.question) {
+            let res = "";
             if (witData.entities.me) {
-                let res = clearEnglish(senderName.toLowerCase()) === "ly" ? { "text": `${senderName} làm gì có ny. còn đang sợ ế đấy :))))` } : { "text": "Chịu t không biết" };
+                res = clearEnglish(senderName.toLowerCase()) === "ly" ? { "text": `${senderName} làm gì có ny. còn đang sợ ế đấy :))))` } : { "text": "Chịu t không biết" };
             }
             else {
-                let res = { "text": "T có rồi. ny t xinh lắm :)))))" }
+                res = { "text": "T có rồi. ny t xinh lắm :)))))" }
             }
             callSendAPI(senderID, res);
             return;
@@ -202,11 +203,12 @@ const messageWitAI = async (fbUserMessage, senderID) => {
             return;
         }
         if (witData.entities.handsome) {
+            let res = "";
             if (witData.entities.question) {
-                let res = { "text": "Tôi chưa gặp bạn nên không biết" }
+                res = { "text": "Tôi chưa gặp bạn nên không biết" }
             }
             else {
-                let res = { "text": "Ok kệ bạn" }
+                res = { "text": "Ok kệ bạn" }
             }
             callSendAPI(senderID, res);
             return;
