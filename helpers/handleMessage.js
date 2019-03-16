@@ -4,6 +4,7 @@ const request = require("request");
 const RestClient = require('node-rest-client').Client;
 const _ = require('lodash');
 const validateMessage = require('./regexMessage').vaidateMessage;
+const clearEnglish = require('./regexMessage').clearEnglish;
 module.exports.handleMessage = (sender_psid, received_message) => {
     console.log(sender_psid)
     let response;
@@ -187,7 +188,7 @@ const messageWitAI = async (fbUserMessage, senderID) => {
         }
         if (witData.entities.lover && witData.entities.question) {
             if (witData.entities.me) {
-                let res = validateMessage(senderName.toLowerCase()) === "ly" ? { "text": `${senderName} làm gì có ny. còn đang sợ ế đấy :))))` } : { "text": "Chịu t không biết" };
+                let res = clearEnglish(senderName.toLowerCase()) === "ly" ? { "text": `${senderName} làm gì có ny. còn đang sợ ế đấy :))))` } : { "text": "Chịu t không biết" };
             }
             else {
                 let res = { "text": "T có rồi. ny t xinh lắm :)))))" }
